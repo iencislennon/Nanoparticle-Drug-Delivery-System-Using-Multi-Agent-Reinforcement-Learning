@@ -1,0 +1,201 @@
+\documentclass{article}
+\usepackage{amsmath} 
+\usepackage{amsfonts}
+
+\begin{document}
+
+\title{Brownian Motion Simulation: Overdamped Langevin Dynamics}
+\author{Physics Documentation - Day 3}
+\date{}
+\maketitle
+
+\section{Stokes-Einstein Equation}
+
+The Stokes-Einstein equation was published in 1905 by Albert Einstein and around the same time independently by William Sutherland. 
+It describes how small spherical particles diffuse through a fluid at constant temperature by undergoing Brownian motion:
+
+\[
+D = \frac{k_B T}{6 \pi \eta r} \quad \text{[m$^2$/s]}
+\]
+
+where:
+\begin{itemize}
+    \item $D$ is the translational diffusion coefficient,
+    \item $k_B = 1.38 \times 10^{-23}$ J/K is Boltzmann's constant,
+    \item $T$ is the absolute temperature (310 K for human body),
+    \item $\eta$ is the solvent viscosity (Pa$\cdot$s),
+    \item $r$ is the radius of the particle.
+\end{itemize}
+
+\textbf{Note:} Your original equation had the numerator and denominator flipped. The correct form is shown above.
+
+\section{Full Langevin Equation (Not Used)}
+
+The complete Langevin equation for a particle with mass $m$ is:
+
+\[
+m \frac{d\mathbf{v}}{dt} = -\gamma \mathbf{v} + \mathbf{F}_{\text{random}}(t)
+\]
+
+where:
+\begin{itemize}
+    \item $\gamma = 6\pi\eta r$ is the drag coefficient (Stokes law),
+    \item $\mathbf{v}$ is velocity,
+    \item $\mathbf{F}_{\text{random}}$ is the random thermal force.
+\end{itemize}
+
+The thermal force has magnitude:
+\[
+\mathbf{F}_{\text{random}} = \sqrt{\frac{2\gamma k_B T}{\Delta t}} \, \boldsymbol{\xi}
+\]
+where $\boldsymbol{\xi} \sim \mathcal{N}(0, \mathbf{I})$ is Gaussian white noise.
+
+\subsection{Why Full Langevin is Impractical}
+
+For nanoparticles, the velocity relaxation time is:
+\[
+\tau = \frac{m}{\gamma} = \frac{m}{6\pi\eta r}
+\]
+
+For a 100 nm iron oxide particle:
+\[
+\tau \approx 8 \times 10^{-10} \text{ seconds (0.8 nanoseconds)}
+\]
+
+To maintain numerical stability, we would need $\Delta t \ll \tau$, requiring millions of time steps for even 1 second of simulation. This is computationally prohibitive.
+
+\section{Overdamped Langevin Equation (Used)}
+
+\subsection{Physical Justification}
+
+When the simulation time step satisfies $\Delta t \gg \tau$ (in our case, $\Delta t / \tau \approx 10^8$), 
+inertia becomes negligible. The particle's velocity instantly adjusts to balance drag and random forces.
+
+This is the \textbf{overdamped regime}, standard for nanoparticles in biological fluids.
+
+\subsection{Overdamped Equation}
+
+In the overdamped limit, the Langevin equation simplifies to:
+
+\[
+\mathbf{x}(t + \Delta t) = \mathbf{x}(t) + \sqrt{2D\Delta t} \, \boldsymbol{\xi}
+\]
+
+where:
+\begin{itemize}
+    \item $\mathbf{x}$ is position,
+    \item $D$ is the diffusion coefficient (from Stokes-Einstein),
+    \item $\boldsymbol{\xi} \sim \mathcal{N}(0, \mathbf{I})$ is 3D Gaussian noise.
+\end{itemize}
+
+\textbf{Key insight:} No velocity tracking needed! Position updates directly from diffusion.
+
+\subsection{Derivation}
+
+Starting from full Langevin in overdamped limit ($m \to 0$):
+\[
+0 = -\gamma \mathbf{v} + \mathbf{F}_{\text{random}}
+\]
+
+Thus:
+\[
+\mathbf{v} = \frac{\mathbf{F}_{\text{random}}}{\gamma}
+\]
+
+Integrating position:
+\[
+\Delta \mathbf{x} = \mathbf{v} \Delta t = \frac{\mathbf{F}_{\text{random}}}{\gamma} \Delta t
+\]
+
+Substituting $\mathbf{F}_{\text{random}} = \sqrt{2\gamma k_B T / \Delta t} \, \boldsymbol{\xi}$:
+\[
+\Delta \mathbf{x} = \sqrt{\frac{2k_B T}{\gamma} \Delta t} \, \boldsymbol{\xi} = \sqrt{2D\Delta t} \, \boldsymbol{\xi}
+\]
+
+where we used $D = k_B T / \gamma$ (Einstein relation).
+
+\section{Gaussian White Noise}
+
+Gaussian noise in this context means the random thermal force is statistically characterized by a Gaussian probability density function:
+\[
+p(\xi) = \frac{1}{\sqrt{2\pi}} e^{-\xi^2/2}
+\]
+
+It is assumed to be \textbf{white noise} — uncorrelated in time with flat power spectral density. This represents thermal fluctuations from molecular collisions.
+
+\section{Fluctuation-Dissipation Theorem}
+
+The fluctuation-dissipation theorem (FDT) is a fundamental principle in statistical physics that establishes a direct relationship between:
+\begin{itemize}
+    \item \textbf{Fluctuations:} Random thermal forces ($\mathbf{F}_{\text{random}}$)
+    \item \textbf{Dissipation:} Friction/drag ($\gamma$)
+\end{itemize}
+
+Essentially: The strength of random kicks must balance friction to maintain thermal equilibrium at temperature $T$.
+
+Mathematical statement:
+\[
+\langle \mathbf{F}_{\text{random}}(t) \cdot \mathbf{F}_{\text{random}}(t') \rangle = 2\gamma k_B T \, \delta(t-t')
+\]
+
+This ensures the system stays at temperature $T$ without artificial heating or cooling.
+
+\section{Numerical Integration: Forward Euler Method}
+
+To simulate motion over discrete time steps, we use the forward Euler method:
+
+\[
+y_{n+1} = y_n + \Delta t \cdot f(t_n, y_n)
+\]
+
+where:
+\begin{itemize}
+    \item $y_n$ is the current value,
+    \item $y_{n+1}$ is the next value,
+    \item $\Delta t$ is the time step size, and
+    \item $f(t_n, y_n)$ is the derivative or rate of change at time $t_n$.
+\end{itemize}
+
+For overdamped Langevin, there is no derivative to integrate — position updates directly from the stochastic term.
+
+\section{Implementation Summary}
+
+\subsection{Parameters}
+\begin{itemize}
+    \item Particle radius: $r = 50$ nm
+    \item Viscosity: $\eta = 3.5$ mPa$\cdot$s (blood)
+    \item Temperature: $T = 310$ K (37°C)
+    \item Diffusion coefficient: $D = 1.30 \times 10^{-12}$ m$^2$/s
+\end{itemize}
+
+\subsection{Algorithm}
+\begin{enumerate}
+    \item Initialize position $\mathbf{x}_0 = (0, 0, 0)$
+    \item For each time step:
+    \begin{enumerate}
+        \item Generate random displacement: $\Delta \mathbf{x} = \sqrt{2D\Delta t} \, \boldsymbol{\xi}$
+        \item Update position: $\mathbf{x}_{n+1} = \mathbf{x}_n + \Delta \mathbf{x}$
+    \end{enumerate}
+    \item Calculate total displacement: $|\mathbf{x}_{\text{final}} - \mathbf{x}_0|$
+\end{enumerate}
+
+\subsection{Validation}
+
+Theoretical mean displacement after time $t$:
+\[
+\langle |\Delta \mathbf{x}| \rangle = \sqrt{6Dt}
+\]
+
+For $t = 100$ s: Expected $\approx 27.9$ $\mu$m
+
+Simulation results match theory (within statistical variance) $\checkmark$
+
+\section{References}
+
+\begin{itemize}
+    \item Einstein, A. (1905). "On the movement of small particles."
+    \item Berg, H. C. (1993). \textit{Random Walks in Biology}. Princeton University Press.
+    \item Howard, J. (2001). \textit{Mechanics of Motor Proteins and the Cytoskeleton}. Sinauer.
+\end{itemize}
+
+\end{document}

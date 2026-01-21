@@ -1,0 +1,38 @@
+# Core Dependencies
+numpy>=1.21.0
+pandas>=1.3.0
+matplotlib>=3.4.0
+scipy>=1.7.0
+
+# Deep Learning
+torch>=1.10.0
+torchvision>=0.11.0
+
+# Machine Learning
+scikit-learn>=1.0.0
+
+# Biology/Bioinformatics
+biopython>=1.79
+
+# Data Processing
+openpyxl>=3.0.9
+xlrd>=2.0.1
+
+# Document Generation
+python-docx>=0.8.11
+reportlab>=3.6.0
+PyPDF2>=1.26.0
+
+# Visualization
+seaborn>=0.11.2
+plotly>=5.3.0
+
+# Progress Bars
+tqdm>=4.62.0
+
+# Testing (optional)
+pytest>=6.2.0
+
+# Jupyter (optional, for notebooks)
+jupyter>=1.0.0
+ipython>=7.28.0

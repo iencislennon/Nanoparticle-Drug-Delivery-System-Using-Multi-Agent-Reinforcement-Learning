@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large data files
+*.npy
+*.pth
+*.h5
+*.pkl
+
+# Raw data (reproducible via scripts)
+data/genomic/raw/*
+!data/genomic/raw/.gitkeep
+
+# Processed data (reproducible via scripts)
+data/genomic/processed/*
+!data/genomic/processed/.gitkeep
+
+# Outputs (reproducible)
+outputs/*
+!outputs/.gitkeep
+
+# Environment
+.env
+
+# OS
+Thumbs.db
