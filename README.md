@@ -12,9 +12,25 @@ This project presents a computational framework that integrates biophysical simu
 
 ### Status and data provenance
 
-> **Synthetic simulation.** This is a research prototype. The code in this repository runs on **synthetic** patient inputs (randomly generated sequence arrays), and no TCGA/GDC data is committed here. No clinical claims are made. Earlier AUROC figures (0.71 / 0.79) came from training on a real cohort outside this repository and **cannot be reproduced from it**: the data pipeline and saved evaluation outputs are not included, so they are not reported here.
+> **Research prototype, no clinical claims.** The RL and tumour simulation run on a simplified synthetic model, and `demo.py` falls back to a synthetic patient with an untrained genomic model. Real data is used only in the genomic baseline below. The earlier AUROC figures (0.71 / 0.79) were not backed by saved evaluation outputs, and the earlier bundled "TCGA" mutation file was randomly generated. Both have been removed.
 >
 > Simulation metrics (hit rate, selectivity, drug utilisation) are produced by `demo.py` and the `validation/` scripts on a simplified tumour model. They are not yet saved as raw artifacts with seeds, so no headline numbers are reported here.
+
+### Genomic baseline on real data
+
+```bash
+python data/genomic/dataset_loader.py   # downloads TCGA-BRCA from cBioPortal
+python genomic/train_real_data.py       # writes outputs/real_data_metrics.json
+```
+
+Task: 5-year mortality (deceased before 60 months vs alive with at least 60 months of follow-up; earlier-censored patients are excluded), a **survival proxy, not a measured drug response**. Features: age, stage, subtype, mutation count and mutation flags for 16 genes. Patient-level stratified split (261 train / 87 test, 348 patients, 99 events).
+
+| Model | CV AUROC (train) | Test AUROC |
+|---|---|---|
+| Logistic regression | 0.688 | 0.689 |
+| Gradient boosting | 0.691 | 0.736 |
+
+The test set has only 87 patients (about 25 events), so these numbers are noisy; read them as "modest signal", not as a validated clinical model.
 
 ## Results Visualization
 
@@ -63,8 +79,8 @@ This project presents a computational framework that integrates biophysical simu
 - **3-Zone Tumor Model**: Necrotic core, hypoxic zone, and proliferative rim with distinct properties
 - **Multi-Agent RL**: 5 autonomous nanoparticle agents with hierarchical decision-making
 - **Pheromone Communication**: Bio-inspired inter-agent coordination
-- **Vision Transformer**: 6.4M parameter model for genomic drug response prediction (the bundled demo uses synthetic inputs)
-- **Synthetic patients**: genomic inputs are randomly generated; a real-data path (TCGA/GDC acquisition, patient-level split) is future work
+- **Vision Transformer**: 6.4M parameter model for genomic response prediction (architecture only; not trained on real data)
+- **Real TCGA-BRCA data**: `data/genomic/dataset_loader.py` downloads the TCGA-BRCA PanCancer Atlas 2018 study from cBioPortal (1,084 patients, 126,252 somatic mutations from 1,009 of them). DNA sequence windows are not built yet (they need a GRCh37 reference), so the Vision Transformer is not trained on real data.
 
 ## Project Structure
 ```
@@ -86,7 +102,7 @@ amgen_project/
 │   └── sequence_encoder.py       # DNA one-hot encoding
 ├── data/
 │   └── genomic/
-│       ├── raw/                  # (not included)
+│       ├── raw/                  # created by dataset_loader.py (not committed)
 │       └── processed/            # Encoded sequences
 ├── analytics/
 │   ├── ablation_studies.py       # Component importance

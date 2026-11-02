@@ -21,7 +21,7 @@ import urllib.request
 import pandas as pd
 
 STUDY = "brca_tcga_pan_can_atlas_2018"
-URL = f"https://cbioportal-datahub.s3.amazonaws.com/{STUDY}.tar.gz"
+URL = f"https://datahub.assets.cbioportal.org/{STUDY}.tar.gz"
 RAW_DIR = "data/genomic/raw"
 MAF_COLUMNS = [
     "Hugo_Symbol", "Tumor_Sample_Barcode", "Variant_Classification",
@@ -54,7 +54,7 @@ def build_clinical(tar):
         "Subtype": df["SUBTYPE"],
         "Survival_Months": df["OS_MONTHS"],
         "Survival_Status": df["OS_STATUS"],
-        "Mutation_Count": df.get("MUTATION_COUNT"),
+        "Mutation_Count": None,
         "Sex": df["SEX"],
         "Race": df["RACE"],
     })
@@ -77,6 +77,8 @@ def main():
         clinical = build_clinical(tar)
         mutations = build_mutations(tar)
 
+    counts = mutations.groupby("Patient_ID").size()
+    clinical["Mutation_Count"] = clinical["Patient_ID"].map(counts).fillna(0).astype(int)
     clinical.to_csv(f"{RAW_DIR}/clinical_data.csv", index=False)
     mutations.to_csv(f"{RAW_DIR}/tcga_brca_mutations.csv", index=False)
     pd.DataFrame({
