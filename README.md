@@ -86,7 +86,7 @@ amgen_project/
 │   └── sequence_encoder.py       # DNA one-hot encoding
 ├── data/
 │   └── genomic/
-│       ├── raw/                  # TCGA data (generated)
+│       ├── raw/                  # (not included)
 │       └── processed/            # Encoded sequences
 ├── analytics/
 │   ├── ablation_studies.py       # Component importance
