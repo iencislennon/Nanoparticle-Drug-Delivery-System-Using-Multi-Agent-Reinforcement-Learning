@@ -10,15 +10,11 @@
 
 This project presents a computational framework that integrates biophysical simulation, multi-agent reinforcement learning, and Vision Transformer-based genomic analysis to design personalized nanoparticle drug delivery strategies for cancer therapy.
 
-### Key Results
+### Status and data provenance
 
-| Metric | Baseline | Our System | Improvement |
-|--------|----------|------------|-------------|
-| Cancer Cell Hit Rate | 0.5% | 3.2% | **+540%** |
-| Targeting Efficiency | — | — | **+52%** |
-| Selectivity Index | 1.0× | 6.8× | **+580%** |
-| Drug Utilization | 15% | 78% | **+420%** |
-| Genomic AUROC | — | 0.79 | — |
+> **Synthetic simulation.** This is a research prototype. All patient inputs are **synthetic** (randomly generated sequence arrays); no TCGA/GDC data is included or used, and no clinical claims are made. The genomic model has **no validated AUROC**: earlier figures (0.71 / 0.79) were not backed by a real cohort or saved evaluation outputs and have been removed.
+>
+> Simulation metrics (hit rate, selectivity, drug utilisation) are produced by `demo.py` and the `validation/` scripts on a simplified tumour model. They are not yet saved as raw artifacts with seeds, so no headline numbers are reported here.
 
 ## Results Visualization
 
@@ -67,8 +63,8 @@ This project presents a computational framework that integrates biophysical simu
 - **3-Zone Tumor Model**: Necrotic core, hypoxic zone, and proliferative rim with distinct properties
 - **Multi-Agent RL**: 5 autonomous nanoparticle agents with hierarchical decision-making
 - **Pheromone Communication**: Bio-inspired inter-agent coordination
-- **Vision Transformer**: 6.4M parameter model for genomic drug response prediction
-- **TCGA Integration**: Trained on 1,084 patients with 61,334 somatic mutations
+- **Vision Transformer**: 6.4M parameter model for genomic drug response prediction (trained on synthetic inputs only)
+- **Synthetic patients**: genomic inputs are randomly generated; a real-data path (TCGA/GDC acquisition, patient-level split) is future work
 
 ## Project Structure
 ```
@@ -90,7 +86,7 @@ amgen_project/
 │   └── sequence_encoder.py       # DNA one-hot encoding
 ├── data/
 │   └── genomic/
-│       ├── raw/                  # TCGA data (generated)
+│       ├── raw/                  # (not included)
 │       └── processed/            # Encoded sequences
 ├── analytics/
 │   ├── ablation_studies.py       # Component importance
@@ -116,18 +112,6 @@ pip install -r requirements.txt
 ## Quick Start
 ```bash
 python demo.py
-```
-
-## Citation
-```bibtex
-@article{tleubayev2025nanoparticle,
-  title={Personalized Nanoparticle Drug Delivery System Using Multi-Agent 
-         Reinforcement Learning and Genomic Analysis},
-  author={Tleubayev, Ansar},
-  journal={arXiv preprint},
-  year={2025},
-  institution={Suleyman Demirel University}
-}
 ```
 
 ## License
