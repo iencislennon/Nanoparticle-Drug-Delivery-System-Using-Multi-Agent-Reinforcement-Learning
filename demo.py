@@ -610,7 +610,7 @@ def main():
         genomic_model.load_state_dict(
             torch.load('data/genomic/processed/best_model.pth')
         )
-        print("Trained model loaded (AUROC: 0.71)")
+        print("Trained model loaded (synthetic training data; no validated AUROC)")
     except:
         print("Using untrained model")
     
