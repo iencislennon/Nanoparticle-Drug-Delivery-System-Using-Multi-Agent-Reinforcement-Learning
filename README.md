@@ -12,7 +12,7 @@ This project presents a computational framework that integrates biophysical simu
 
 ### Status and data provenance
 
-> **Synthetic simulation.** This is a research prototype. All patient inputs are **synthetic** (randomly generated sequence arrays); no TCGA/GDC data is included or used, and no clinical claims are made. The genomic model has **no validated AUROC**: earlier figures (0.71 / 0.79) were not backed by a real cohort or saved evaluation outputs and have been removed.
+> **Synthetic simulation.** This is a research prototype. The code in this repository runs on **synthetic** patient inputs (randomly generated sequence arrays), and no TCGA/GDC data is committed here. No clinical claims are made. Earlier AUROC figures (0.71 / 0.79) came from training on a real cohort outside this repository and **cannot be reproduced from it**: the data pipeline and saved evaluation outputs are not included, so they are not reported here.
 >
 > Simulation metrics (hit rate, selectivity, drug utilisation) are produced by `demo.py` and the `validation/` scripts on a simplified tumour model. They are not yet saved as raw artifacts with seeds, so no headline numbers are reported here.
 
@@ -63,7 +63,7 @@ This project presents a computational framework that integrates biophysical simu
 - **3-Zone Tumor Model**: Necrotic core, hypoxic zone, and proliferative rim with distinct properties
 - **Multi-Agent RL**: 5 autonomous nanoparticle agents with hierarchical decision-making
 - **Pheromone Communication**: Bio-inspired inter-agent coordination
-- **Vision Transformer**: 6.4M parameter model for genomic drug response prediction (trained on synthetic inputs only)
+- **Vision Transformer**: 6.4M parameter model for genomic drug response prediction (the bundled demo uses synthetic inputs)
 - **Synthetic patients**: genomic inputs are randomly generated; a real-data path (TCGA/GDC acquisition, patient-level split) is future work
 
 ## Project Structure
